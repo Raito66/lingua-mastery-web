@@ -64,7 +64,10 @@ export default function BooksPage() {
       <header className="bg-white border-b px-6 py-4 flex justify-between items-center">
         <h1 className="text-xl font-bold text-gray-800">LinguaMastery</h1>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-500">{email}</span>
+          <button onClick={() => navigate('/stats')} className="text-sm text-gray-500 hover:underline">
+            統計
+          </button>
+          <span className="text-sm text-gray-400">{email}</span>
           <button onClick={handleLogout} className="text-sm text-red-500 hover:underline">
             登出
           </button>
@@ -104,10 +107,16 @@ export default function BooksPage() {
                 </div>
                 <div className="flex gap-2">
                   <button
+                    onClick={() => navigate(`/books/${book.id}/study`)}
+                    className="text-sm text-green-600 hover:underline"
+                  >
+                    測驗
+                  </button>
+                  <button
                     onClick={() => navigate(`/books/${book.id}/words`)}
                     className="text-sm text-blue-600 hover:underline"
                   >
-                    查看
+                    單字
                   </button>
                   <button
                     onClick={() => handleDelete(book.id, book.name)}
