@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getBooks, createBook, deleteBook } from '../api/books'
+import { getBooks, createBook, updateBook, deleteBook } from '../api/books'
 import type { WordBook } from '../api/books'
 
 export default function BooksPage() {
@@ -13,6 +13,10 @@ export default function BooksPage() {
   const [newName, setNewName] = useState('')
   const [newLanguage, setNewLanguage] = useState<'JAPANESE' | 'ENGLISH'>('JAPANESE')
   const [creating, setCreating] = useState(false)
+  const [editingBook, setEditingBook] = useState<WordBook | null>(null)
+  const [editName, setEditName] = useState('')
+  const [editLanguage, setEditLanguage] = useState<'JAPANESE' | 'ENGLISH'>('JAPANESE')
+  const [saving, setSaving] = useState(false)
 
   const fetchBooks = async () => {
     try {
@@ -42,6 +46,27 @@ export default function BooksPage() {
       fetchBooks()
     } finally {
       setCreating(false)
+    }
+  }
+
+  const handleEdit = (book: WordBook) => {
+    setEditingBook(book)
+    setEditName(book.name)
+    setEditLanguage(book.language)
+  }
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingBook || !editName.trim()) return
+    setSaving(true)
+    try {
+      await updateBook(editingBook.id, editName.trim(), editLanguage)
+      setEditingBook(null)
+      fetchBooks()
+    } catch {
+      alert('儲存失敗，請稍後再試')
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -119,6 +144,12 @@ export default function BooksPage() {
                     單字
                   </button>
                   <button
+                    onClick={() => handleEdit(book)}
+                    className="text-sm text-gray-500 hover:underline"
+                  >
+                    編輯
+                  </button>
+                  <button
                     onClick={() => handleDelete(book.id, book.name)}
                     className="text-sm text-red-400 hover:underline"
                   >
@@ -130,6 +161,53 @@ export default function BooksPage() {
           </div>
         )}
       </main>
+
+      {editingBook && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">編輯單字本</h3>
+            <form onSubmit={handleSaveEdit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">名稱</label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  required
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">語言</label>
+                <select
+                  value={editLanguage}
+                  onChange={(e) => setEditLanguage(e.target.value as 'JAPANESE' | 'ENGLISH')}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="JAPANESE">🇯🇵 日文</option>
+                  <option value="ENGLISH">🇺🇸 英文</option>
+                </select>
+              </div>
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setEditingBook(null)}
+                  className="flex-1 border border-gray-300 text-gray-600 text-sm font-medium py-2 rounded-lg hover:bg-gray-50 transition"
+                >
+                  取消
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-lg transition disabled:opacity-50"
+                >
+                  {saving ? '儲存中...' : '儲存'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
