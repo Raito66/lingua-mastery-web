@@ -1,28 +1,40 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { register } from '../api/auth'
 
 export default function RegisterPage() {
-  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [done, setDone] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
     try {
-      const res = await register(email, password)
-      localStorage.setItem('token', res.data.token)
-      localStorage.setItem('email', res.data.email)
-      navigate('/books')
+      await register(email, password)
+      setDone(true)
     } catch (err: any) {
-      setError(err.response?.data?.error ?? '註冊失敗，請再試一次')
+      setError(err.response?.data?.message ?? '註冊失敗，請再試一次')
     } finally {
       setLoading(false)
     }
+  }
+
+  if (done) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm text-center">
+          <p className="text-4xl mb-4">📬</p>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">驗證信已寄出！</h2>
+          <p className="text-gray-500 text-sm mb-1">請查收 <span className="font-medium text-gray-700">{email}</span> 的收件匣</p>
+          <p className="text-gray-400 text-xs mb-6">點擊信中的連結完成驗證後，即可登入</p>
+          <Link to="/login" className="text-blue-600 text-sm hover:underline">前往登入 →</Link>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -70,9 +82,7 @@ export default function RegisterPage() {
 
         <p className="text-center text-sm text-gray-500 mt-4">
           已有帳號？{' '}
-          <Link to="/login" className="text-blue-600 hover:underline">
-            登入
-          </Link>
+          <Link to="/login" className="text-blue-600 hover:underline">登入</Link>
         </p>
       </div>
     </div>
