@@ -1,73 +1,121 @@
-# React + TypeScript + Vite
+# LinguaMastery Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[English](#english) | [繁體中文](#繁體中文)
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 繁體中文
 
-## React Compiler
+### 專案簡介
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+LinguaMastery 前端網頁應用，使用 React + TypeScript 開發，提供使用者登入、單字書管理、單字學習與統計等功能。
 
-## Expanding the ESLint configuration
+### 技術棧
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **框架**：React 19
+- **語言**：TypeScript
+- **建置工具**：Vite
+- **樣式**：Tailwind CSS
+- **HTTP**：Axios
+- **路由**：React Router v7
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 主要功能
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- 使用者註冊 / 登入
+- Email 驗證流程
+- 忘記密碼 / 重設密碼
+- 單字書管理
+- 單字學習（翻牌模式）
+- 學習統計
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 本地啟動
+
+#### 前置條件
+
+- Node.js 18+
+- 後端 API 運行於 `http://localhost:8080`
+
+#### 安裝與啟動
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+網頁預設運行於 `http://localhost:5173`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 專案結構
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── api/          # API 呼叫（axios）
+├── pages/        # 各頁面元件
+│   ├── LoginPage.tsx
+│   ├── RegisterPage.tsx
+│   ├── VerifyEmailPage.tsx
+│   ├── ForgotPasswordPage.tsx
+│   ├── ResetPasswordPage.tsx
+│   ├── BooksPage.tsx
+│   ├── WordsPage.tsx
+│   └── StudyPage.tsx
+└── App.tsx       # 路由設定
+```
+
+---
+
+## English
+
+### Overview
+
+Frontend web application for LinguaMastery, a gamified language learning platform. Built with React + TypeScript and Vite.
+
+### Tech Stack
+
+- **Framework**: React 19
+- **Language**: TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **HTTP**: Axios
+- **Routing**: React Router v7
+
+### Features
+
+- User registration / login
+- Email verification flow
+- Forgot password / password reset
+- Vocabulary book management
+- Word study (flashcard mode)
+- Learning statistics
+
+### Getting Started
+
+#### Prerequisites
+
+- Node.js 18+
+- Backend API running at `http://localhost:8080`
+
+#### Install & Run
+
+```bash
+npm install
+npm run dev
+```
+
+App runs at `http://localhost:5173`
+
+### Project Structure
+
+```
+src/
+├── api/          # API calls (axios)
+├── pages/        # Page components
+│   ├── LoginPage.tsx
+│   ├── RegisterPage.tsx
+│   ├── VerifyEmailPage.tsx
+│   ├── ForgotPasswordPage.tsx
+│   ├── ResetPasswordPage.tsx
+│   ├── BooksPage.tsx
+│   ├── WordsPage.tsx
+│   └── StudyPage.tsx
+└── App.tsx       # Route configuration
 ```
