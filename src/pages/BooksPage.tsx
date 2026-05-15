@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getBooks, createBook, updateBook, deleteBook } from '../api/books'
+import { getReviewStats } from '../api/review'
 import type { WordBook } from '../api/books'
+import type { BookReviewStats } from '../api/review'
 
 export default function BooksPage() {
   const navigate = useNavigate()
@@ -17,17 +19,24 @@ export default function BooksPage() {
   const [editName, setEditName] = useState('')
   const [editLanguage, setEditLanguage] = useState<'JAPANESE' | 'ENGLISH'>('JAPANESE')
   const [saving, setSaving] = useState(false)
+  const [reviewStats, setReviewStats] = useState<BookReviewStats[]>([])
 
   const fetchBooks = async () => {
     try {
-      const res = await getBooks()
-      setBooks(res.data)
+      const [booksRes, statsRes] = await Promise.all([getBooks(), getReviewStats()])
+      setBooks(booksRes.data)
+      setReviewStats(statsRes.data)
     } catch {
       localStorage.clear()
       navigate('/login')
     } finally {
       setLoading(false)
     }
+  }
+
+  const getReviewCount = (bookId: number) => {
+    const s = reviewStats.find((r) => r.bookId === bookId)
+    return s ? s.dueCount + s.newCount : 0
   }
 
   useEffect(() => {
@@ -130,12 +139,23 @@ export default function BooksPage() {
                     {languageLabel(book.language)} · {book.wordCount} 個單字
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <button
                     onClick={() => navigate(`/books/${book.id}/study`)}
                     className="text-sm text-green-600 hover:underline"
                   >
                     測驗
+                  </button>
+                  <button
+                    onClick={() => navigate(`/books/${book.id}/review`)}
+                    className="text-sm text-purple-600 hover:underline flex items-center gap-1"
+                  >
+                    複習
+                    {getReviewCount(book.id) > 0 && (
+                      <span className="bg-purple-100 text-purple-700 text-xs font-bold px-1.5 py-0.5 rounded-full">
+                        {getReviewCount(book.id)}
+                      </span>
+                    )}
                   </button>
                   <button
                     onClick={() => navigate(`/books/${book.id}/words`)}

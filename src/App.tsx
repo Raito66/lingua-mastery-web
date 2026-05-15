@@ -7,6 +7,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage'
 import BooksPage from './pages/BooksPage'
 import WordsPage from './pages/WordsPage'
 import StudyPage from './pages/StudyPage'
+import ReviewPage from './pages/ReviewPage'
 import StatsPage from './pages/StatsPage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/books" element={<PrivateRoute><BooksPage /></PrivateRoute>} />
         <Route path="/books/:bookId/words" element={<PrivateRoute><WordsPage /></PrivateRoute>} />
         <Route path="/books/:bookId/study" element={<PrivateRoute><StudyPage /></PrivateRoute>} />
+        <Route path="/books/:bookId/review" element={<PrivateRoute><ReviewPage /></PrivateRoute>} />
         <Route path="/stats" element={<PrivateRoute><StatsPage /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
