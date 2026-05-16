@@ -40,6 +40,13 @@ export default function StudyPage() {
   const currentWord = words[index]
   const total = words.length
 
+  // 每次進入 question 階段自動朗讀
+  useEffect(() => {
+    if (phase === 'question' && currentWord && book) {
+      speak(currentWord.word, book.language)
+    }
+  }, [index, phase])
+
   const handleReveal = () => setPhase('answer')
 
   const handleAnswer = async (isCorrect: boolean) => {

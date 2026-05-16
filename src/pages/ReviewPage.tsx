@@ -43,6 +43,13 @@ export default function ReviewPage() {
   const currentWord = words[index]
   const total = words.length
 
+  // 每次進入 question 階段自動朗讀
+  useEffect(() => {
+    if (phase === 'question' && currentWord && book) {
+      speak(currentWord.word, book.language)
+    }
+  }, [index, phase])
+
   const handleAnswer = async (isCorrect: boolean) => {
     await submitReview(currentWord.id, isCorrect)
     if (isCorrect) setCorrect((c) => c + 1)
