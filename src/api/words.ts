@@ -32,6 +32,9 @@ export const updateWord = (wordId: number, data: WordRequest) =>
 export const deleteWord = (wordId: number) =>
   api.delete(`/api/words/${wordId}`)
 
+export const deleteWords = (ids: number[]) =>
+  api.delete('/api/words/batch', { data: ids })
+
 export interface ImportResult {
   total: number
   success: number

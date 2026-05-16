@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getWords, createWord, updateWord, deleteWord, importWords } from '../api/words'
+import { getWords, createWord, updateWord, deleteWord, deleteWords, importWords } from '../api/words'
 import type { Word, WordRequest, ImportResult } from '../api/words'
 import { getBooks } from '../api/books'
 import type { WordBook } from '../api/books'
@@ -36,6 +36,9 @@ export default function WordsPage() {
   const [importFile, setImportFile] = useState<File | null>(null)
   const [importing, setImporting] = useState(false)
   const [importResult, setImportResult] = useState<ImportResult | null>(null)
+
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
+  const [deleting, setDeleting] = useState(false)
 
   const id = Number(bookId)
 
@@ -97,6 +100,34 @@ export default function WordsPage() {
     setWords((prev) => prev.filter((w) => w.id !== word.id))
   }
 
+  const toggleSelect = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === words.length) {
+      setSelectedIds(new Set())
+    } else {
+      setSelectedIds(new Set(words.map((w) => w.id)))
+    }
+  }
+
+  const handleDeleteSelected = async () => {
+    if (!confirm(`確定刪除選取的 ${selectedIds.size} 個單字？`)) return
+    setDeleting(true)
+    try {
+      await deleteWords(Array.from(selectedIds))
+      setSelectedIds(new Set())
+      fetchData()
+    } finally {
+      setDeleting(false)
+    }
+  }
+
   const handleImport = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!importFile) return
@@ -124,7 +155,16 @@ export default function WordsPage() {
           </button>
           <h1 className="text-xl font-bold text-gray-800">{book?.name ?? '...'}</h1>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          {selectedIds.size > 0 && (
+            <button
+              onClick={handleDeleteSelected}
+              disabled={deleting}
+              className="bg-red-500 hover:bg-red-600 text-white text-sm font-medium px-4 py-2 rounded-lg transition disabled:opacity-50"
+            >
+              {deleting ? '刪除中...' : `刪除已選 (${selectedIds.size})`}
+            </button>
+          )}
           <button
             onClick={() => { setShowImportModal(true); setImportResult(null); setImportFile(null) }}
             className="border border-gray-300 text-gray-600 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition"
@@ -150,9 +190,29 @@ export default function WordsPage() {
           </div>
         ) : (
           <div className="space-y-3">
+            <div className="flex items-center gap-2 px-1 pb-1">
+              <input
+                type="checkbox"
+                checked={selectedIds.size === words.length && words.length > 0}
+                onChange={toggleSelectAll}
+                className="w-4 h-4 accent-blue-600 cursor-pointer"
+              />
+              <span className="text-sm text-gray-400">
+                {selectedIds.size > 0 ? `已選 ${selectedIds.size} / ${words.length}` : '全選'}
+              </span>
+            </div>
             {words.map((w) => (
-              <div key={w.id} className="bg-white rounded-xl border px-5 py-4 hover:shadow-sm transition">
-                <div className="flex justify-between items-start">
+              <div
+                key={w.id}
+                className={`bg-white rounded-xl border px-5 py-4 hover:shadow-sm transition ${selectedIds.has(w.id) ? 'border-blue-300 bg-blue-50' : ''}`}
+              >
+                <div className="flex justify-between items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(w.id)}
+                    onChange={() => toggleSelect(w.id)}
+                    className="mt-1 w-4 h-4 accent-blue-600 cursor-pointer flex-shrink-0"
+                  />
                   <div className="flex-1">
                     <div className="flex items-baseline gap-2">
                       <span className="text-lg font-semibold text-gray-800">{w.word}</span>
@@ -168,7 +228,7 @@ export default function WordsPage() {
                       {levelLabel(w.level)}
                     </span>
                   </div>
-                  <div className="flex gap-2 ml-4">
+                  <div className="flex gap-2 ml-2 flex-shrink-0">
                     <button onClick={() => openEdit(w)} className="text-sm text-gray-500 hover:underline">
                       編輯
                     </button>
