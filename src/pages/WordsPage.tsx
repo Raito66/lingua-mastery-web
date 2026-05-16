@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { getWords, createWord, updateWord, deleteWord, deleteWords, importWords } from '../api/words'
 import type { Word, WordRequest, ImportResult } from '../api/words'
+import { speak } from '../utils/tts'
 import { getBooks } from '../api/books'
 import type { WordBook } from '../api/books'
 
@@ -214,11 +215,18 @@ export default function WordsPage() {
                     className="mt-1 w-4 h-4 accent-blue-600 cursor-pointer flex-shrink-0"
                   />
                   <div className="flex-1">
-                    <div className="flex items-baseline gap-2">
+                    <div className="flex items-center gap-2">
                       <span className="text-lg font-semibold text-gray-800">{w.word}</span>
                       {w.reading && (
                         <span className="text-sm text-gray-400">{w.reading}</span>
                       )}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); speak(w.word, book?.language ?? 'ENGLISH') }}
+                        className="text-gray-300 hover:text-blue-400 transition text-base leading-none"
+                        title="播放發音"
+                      >
+                        🔊
+                      </button>
                     </div>
                     <p className="text-gray-600 mt-0.5">{w.translation}</p>
                     {w.example && (

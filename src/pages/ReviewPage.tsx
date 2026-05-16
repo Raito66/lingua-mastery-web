@@ -4,6 +4,7 @@ import { getReviewWords, submitReview } from '../api/review'
 import { getBooks } from '../api/books'
 import type { Word } from '../api/words'
 import type { WordBook } from '../api/books'
+import { speak } from '../utils/tts'
 
 type Phase = 'loading' | 'empty' | 'question' | 'answer' | 'done'
 
@@ -152,6 +153,13 @@ export default function ReviewPage() {
           {currentWord.reading && (
             <p className="text-lg text-gray-400 mb-2">{currentWord.reading}</p>
           )}
+          <button
+            onClick={() => speak(currentWord.word, book?.language ?? 'ENGLISH')}
+            className="mt-1 text-gray-300 hover:text-blue-400 transition text-xl"
+            title="播放發音"
+          >
+            🔊
+          </button>
 
           {phase === 'answer' && (
             <div className="mt-4 pt-4 border-t w-full">
