@@ -31,3 +31,16 @@ export const updateWord = (wordId: number, data: WordRequest) =>
 
 export const deleteWord = (wordId: number) =>
   api.delete(`/api/words/${wordId}`)
+
+export interface ImportResult {
+  total: number
+  success: number
+  failed: number
+  errors: string[]
+}
+
+export const importWords = (bookId: number, file: File) => {
+  const formData = new FormData()
+  formData.append('file', file)
+  return api.post<ImportResult>(`/api/books/${bookId}/words/import`, formData)
+}

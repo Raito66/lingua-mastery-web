@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { getWords, createWord, updateWord, deleteWord } from '../api/words'
-import type { Word, WordRequest } from '../api/words'
+import { getWords, createWord, updateWord, deleteWord, importWords } from '../api/words'
+import type { Word, WordRequest, ImportResult } from '../api/words'
 import { getBooks } from '../api/books'
 import type { WordBook } from '../api/books'
 
@@ -31,6 +31,11 @@ export default function WordsPage() {
   const [editWord, setEditWord] = useState<Word | null>(null)
   const [form, setForm] = useState<WordRequest>(emptyForm('JAPANESE'))
   const [saving, setSaving] = useState(false)
+
+  const [showImportModal, setShowImportModal] = useState(false)
+  const [importFile, setImportFile] = useState<File | null>(null)
+  const [importing, setImporting] = useState(false)
+  const [importResult, setImportResult] = useState<ImportResult | null>(null)
 
   const id = Number(bookId)
 
@@ -92,6 +97,22 @@ export default function WordsPage() {
     setWords((prev) => prev.filter((w) => w.id !== word.id))
   }
 
+  const handleImport = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!importFile) return
+    setImporting(true)
+    setImportResult(null)
+    try {
+      const res = await importWords(id, importFile)
+      setImportResult(res.data)
+      if (res.data.success > 0) fetchData()
+    } catch {
+      setImportResult({ total: 0, success: 0, failed: 1, errors: ['上傳失敗，請確認檔案格式'] })
+    } finally {
+      setImporting(false)
+    }
+  }
+
   const levels = book?.language === 'JAPANESE' ? JAPANESE_LEVELS : ENGLISH_LEVELS
 
   return (
@@ -103,12 +124,20 @@ export default function WordsPage() {
           </button>
           <h1 className="text-xl font-bold text-gray-800">{book?.name ?? '...'}</h1>
         </div>
-        <button
-          onClick={openCreate}
-          className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition"
-        >
-          + 新增單字
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => { setShowImportModal(true); setImportResult(null); setImportFile(null) }}
+            className="border border-gray-300 text-gray-600 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition"
+          >
+            匯入 CSV
+          </button>
+          <button
+            onClick={openCreate}
+            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition"
+          >
+            + 新增單字
+          </button>
+        </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8">
@@ -153,6 +182,60 @@ export default function WordsPage() {
           </div>
         )}
       </main>
+
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-1">匯入 CSV</h3>
+            <p className="text-xs text-gray-400 mb-4">
+              格式：<code className="bg-gray-100 px-1 rounded">word,reading,translation,example,level</code>
+              （第一列為表頭，reading / example / level 可留空）
+            </p>
+
+            <form onSubmit={handleImport} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">選擇 CSV 檔案</label>
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={(e) => setImportFile(e.target.files?.[0] ?? null)}
+                  className="w-full text-sm text-gray-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+                />
+              </div>
+
+              {importResult && (
+                <div className={`rounded-lg p-3 text-sm ${importResult.failed === 0 ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'}`}>
+                  <p className="font-medium">
+                    成功匯入 {importResult.success} 個，失敗 {importResult.failed} 個
+                  </p>
+                  {importResult.errors.length > 0 && (
+                    <ul className="mt-1 list-disc list-inside text-xs space-y-0.5">
+                      {importResult.errors.map((e, i) => <li key={i}>{e}</li>)}
+                    </ul>
+                  )}
+                </div>
+              )}
+
+              <div className="flex gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowImportModal(false)}
+                  className="flex-1 border border-gray-300 text-gray-600 text-sm font-medium py-2 rounded-lg hover:bg-gray-50 transition"
+                >
+                  關閉
+                </button>
+                <button
+                  type="submit"
+                  disabled={!importFile || importing}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 rounded-lg transition disabled:opacity-50"
+                >
+                  {importing ? '匯入中...' : '開始匯入'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
