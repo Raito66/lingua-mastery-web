@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getBooks, createBook, updateBook, deleteBook } from '../api/books'
 import { getReviewStats } from '../api/review'
+import { getStreak } from '../api/stats'
 import type { WordBook } from '../api/books'
 import type { BookReviewStats } from '../api/review'
+import type { StreakResponse } from '../api/stats'
 
 export default function BooksPage() {
   const navigate = useNavigate()
@@ -20,12 +22,14 @@ export default function BooksPage() {
   const [editLanguage, setEditLanguage] = useState<'JAPANESE' | 'ENGLISH'>('JAPANESE')
   const [saving, setSaving] = useState(false)
   const [reviewStats, setReviewStats] = useState<BookReviewStats[]>([])
+  const [streak, setStreak] = useState<StreakResponse>({ streak: 0, todayCount: 0 })
 
   const fetchBooks = async () => {
     try {
-      const [booksRes, statsRes] = await Promise.all([getBooks(), getReviewStats()])
+      const [booksRes, statsRes, streakRes] = await Promise.all([getBooks(), getReviewStats(), getStreak()])
       setBooks(booksRes.data)
       setReviewStats(statsRes.data)
+      setStreak(streakRes.data)
     } catch {
       localStorage.clear()
       navigate('/login')
@@ -109,6 +113,27 @@ export default function BooksPage() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8">
+        <div className="flex items-center gap-4 mb-6 bg-white rounded-xl border px-5 py-3">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🔥</span>
+            <div>
+              <p className="text-lg font-bold text-gray-800 leading-none">{streak.streak}</p>
+              <p className="text-xs text-gray-400">連續天數</p>
+            </div>
+          </div>
+          <div className="w-px h-8 bg-gray-100" />
+          <div>
+            <p className="text-lg font-bold text-gray-800 leading-none">{streak.todayCount}</p>
+            <p className="text-xs text-gray-400">今日練習</p>
+          </div>
+          {streak.streak === 0 && streak.todayCount === 0 && (
+            <p className="text-sm text-gray-400 ml-auto">今天還沒練習，加油！</p>
+          )}
+          {streak.todayCount > 0 && (
+            <p className="text-sm text-green-500 ml-auto">今天已練習 ✓</p>
+          )}
+        </div>
+
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-gray-800">我的單字本</h2>
           <button
