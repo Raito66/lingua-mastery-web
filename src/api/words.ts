@@ -9,6 +9,7 @@ export interface Word {
   level: string
   language: 'JAPANESE' | 'ENGLISH'
   createdAt: string
+  proficiencyLevel: number // 0=未學習 1=學習中 2=已熟悉 3=已精通
 }
 
 export interface WordRequest {

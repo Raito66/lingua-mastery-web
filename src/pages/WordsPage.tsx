@@ -232,9 +232,21 @@ export default function WordsPage() {
                     {w.example && (
                       <p className="text-sm text-gray-400 mt-1 italic">{w.example}</p>
                     )}
-                    <span className="inline-block mt-2 text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-                      {levelLabel(w.level)}
-                    </span>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+                        {levelLabel(w.level)}
+                      </span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                        w.proficiencyLevel === 3 ? 'bg-purple-100 text-purple-700' :
+                        w.proficiencyLevel === 2 ? 'bg-green-100 text-green-700' :
+                        w.proficiencyLevel === 1 ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-gray-100 text-gray-400'
+                      }`}>
+                        {w.proficiencyLevel === 3 ? '已精通' :
+                         w.proficiencyLevel === 2 ? '已熟悉' :
+                         w.proficiencyLevel === 1 ? '學習中' : '未學習'}
+                      </span>
+                    </div>
                   </div>
                   <div className="flex gap-2 ml-2 flex-shrink-0">
                     <button onClick={() => openEdit(w)} className="text-sm text-gray-500 hover:underline">
