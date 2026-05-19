@@ -9,6 +9,7 @@ import WordsPage from './pages/WordsPage'
 import StudyPage from './pages/StudyPage'
 import ReviewPage from './pages/ReviewPage'
 import StatsPage from './pages/StatsPage'
+import QuizPage from './pages/QuizPage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem('token')
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/books" element={<PrivateRoute><BooksPage /></PrivateRoute>} />
         <Route path="/books/:bookId/words" element={<PrivateRoute><WordsPage /></PrivateRoute>} />
         <Route path="/books/:bookId/study" element={<PrivateRoute><StudyPage /></PrivateRoute>} />
+        <Route path="/books/:bookId/quiz" element={<PrivateRoute><QuizPage /></PrivateRoute>} />
         <Route path="/books/:bookId/review" element={<PrivateRoute><ReviewPage /></PrivateRoute>} />
         <Route path="/stats" element={<PrivateRoute><StatsPage /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/login" />} />

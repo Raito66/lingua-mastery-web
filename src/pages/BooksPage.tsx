@@ -169,7 +169,13 @@ export default function BooksPage() {
                     onClick={() => navigate(`/books/${book.id}/study`)}
                     className="text-sm text-green-600 hover:underline"
                   >
-                    測驗
+                    閃卡
+                  </button>
+                  <button
+                    onClick={() => navigate(`/books/${book.id}/quiz`)}
+                    className="text-sm text-orange-500 hover:underline"
+                  >
+                    選擇題
                   </button>
                   <button
                     onClick={() => navigate(`/books/${book.id}/review`)}
