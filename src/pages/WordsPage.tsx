@@ -138,8 +138,10 @@ export default function WordsPage() {
       const res = await importWords(id, importFile)
       setImportResult(res.data)
       if (res.data.success > 0) fetchData()
-    } catch {
-      setImportResult({ total: 0, success: 0, failed: 1, errors: ['上傳失敗，請確認檔案格式'] })
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+        ?? '上傳失敗，請確認檔案格式'
+      setImportResult({ total: 0, success: 0, failed: 1, errors: [msg] })
     } finally {
       setImporting(false)
     }
