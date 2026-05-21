@@ -267,9 +267,25 @@ export default function WordsPage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4">
             <h3 className="text-lg font-semibold text-gray-800 mb-1">匯入 CSV</h3>
-            <p className="text-xs text-gray-400 mb-4">
+            <p className="text-xs text-gray-400 mb-1">
               格式：<code className="bg-gray-100 px-1 rounded">word,reading,translation,example,level</code>
               （第一列為表頭，reading / example / level 可留空）
+            </p>
+            <p className="text-xs text-gray-400 mb-1">
+              {book?.language === 'JAPANESE'
+                ? 'level 可填：JLPT_N5 / JLPT_N4 / JLPT_N3 / JLPT_N2 / JLPT_N1'
+                : 'level 可填：TOEIC_300 / TOEIC_300_500 / TOEIC_500_700 / TOEIC_700_900 / TOEIC_900PLUS'}
+              {' '}｜{' '}
+              <a
+                href={`${import.meta.env.VITE_API_URL}/sample-words-${book?.language === 'JAPANESE' ? 'japanese' : 'english'}.csv`}
+                download={`sample-words-${book?.language === 'JAPANESE' ? 'japanese' : 'english'}.csv`}
+                className="text-blue-500 underline hover:text-blue-700"
+              >
+                下載範例檔
+              </a>
+            </p>
+            <p className="text-xs text-gray-400 mb-4">
+              最多 500 筆 · 檔案上限 5MB · 支援 UTF-8 及 Shift-JIS（日文 Windows Excel）
             </p>
 
             <form onSubmit={handleImport} className="space-y-4">
