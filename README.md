@@ -178,6 +178,14 @@ src/
 
 ## 更新日誌 / Changelog
 
+### v0.9.7 (2026-05-22)
+- 安全：加入 401 response interceptor，token 過期自動登出並跳回登入頁
+- 修正：Word 型別 reading / example 改為 string | null，符合 API 實際回傳
+- 修正：StudyPage / ReviewPage submitResult 補 try/catch，失敗不中斷學習流程
+- 修正：StudyPage / ReviewPage 進度條改 (index+1)/total，第一題不再顯示 0%
+- 修正：WordsPage handleDelete / handleSave 補錯誤處理並顯示提示訊息
+- 修正：補上 bookId NaN guard，非數字路由直接導回單字本列表
+
 ### v0.9.6 (2026-05-21)
 - CSV 匯入顯示語言對應 level 說明（JLPT / TOEIC）
 - 新增「下載範例檔」連結（依單字本語言自動切換日文 / 英文範例）
@@ -218,6 +226,14 @@ src/
 - 初始版本：登入、單字書管理、閃卡測驗、學習統計
 
 ---
+
+### v0.9.7 (2026-05-22)
+- Security: 401 response interceptor added — auto logout on token expiry
+- Fix: Word type reading / example changed to string | null
+- Fix: StudyPage / ReviewPage submitResult wrapped in try/catch, failures don't interrupt flow
+- Fix: Progress bar changed to (index+1)/total — no longer shows 0% on first card
+- Fix: WordsPage handleDelete / handleSave error handling with user-facing messages
+- Fix: bookId NaN guard added, invalid routes redirect to books list
 
 ### v0.9.6 (2026-05-21)
 - CSV import: language-specific level hints (JLPT / TOEIC)
