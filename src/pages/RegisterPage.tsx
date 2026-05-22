@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { register } from '../api/auth'
 
 export default function RegisterPage() {
+  const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -13,13 +14,17 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    if (!displayName.trim()) {
+      setError('請輸入顯示名稱')
+      return
+    }
     if (!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(password)) {
       setError('密碼至少 8 碼，須包含英文字母與數字')
       return
     }
     setLoading(true)
     try {
-      await register(email, password)
+      await register(email, password, displayName.trim())
       setDone(true)
     } catch (err: any) {
       setError(err.response?.data?.message ?? '註冊失敗，請再試一次')
@@ -49,6 +54,19 @@ export default function RegisterPage() {
         <p className="text-center text-gray-500 text-sm mb-6">建立帳號</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">顯示名稱</label>
+            <input
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              required
+              maxLength={50}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="你的暱稱或姓名"
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input

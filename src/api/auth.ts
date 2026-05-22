@@ -35,8 +35,8 @@ export interface MessageResponse {
   message: string
 }
 
-export const register = (email: string, password: string) =>
-  api.post<MessageResponse>('/api/auth/register', { email, password })
+export const register = (email: string, password: string, displayName: string) =>
+  api.post<MessageResponse>('/api/auth/register', { email, password, displayName })
 
 export const login = (email: string, password: string) =>
   api.post<AuthResponse>('/api/auth/login', { email, password })
