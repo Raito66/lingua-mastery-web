@@ -10,6 +10,7 @@ import StudyPage from './pages/StudyPage'
 import ReviewPage from './pages/ReviewPage'
 import StatsPage from './pages/StatsPage'
 import QuizPage from './pages/QuizPage'
+import ProfilePage from './pages/ProfilePage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem('token')
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/books/:bookId/quiz" element={<PrivateRoute><QuizPage /></PrivateRoute>} />
         <Route path="/books/:bookId/review" element={<PrivateRoute><ReviewPage /></PrivateRoute>} />
         <Route path="/stats" element={<PrivateRoute><StatsPage /></PrivateRoute>} />
+        <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </BrowserRouter>

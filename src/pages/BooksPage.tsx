@@ -89,11 +89,6 @@ export default function BooksPage() {
     setBooks((prev) => prev.filter((b) => b.id !== id))
   }
 
-  const handleLogout = () => {
-    localStorage.clear()
-    navigate('/login')
-  }
-
   const languageLabel = (lang: string) =>
     lang === 'JAPANESE' ? '🇯🇵 日文' : '🇺🇸 英文'
 
@@ -101,13 +96,16 @@ export default function BooksPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b px-6 py-4 flex justify-between items-center">
         <h1 className="text-xl font-bold text-gray-800">LinguaMastery</h1>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button onClick={() => navigate('/stats')} className="text-sm text-gray-500 hover:underline">
             統計
           </button>
-          <span className="text-sm text-gray-400">{email}</span>
-          <button onClick={handleLogout} className="text-sm text-red-500 hover:underline">
-            登出
+          <button
+            onClick={() => navigate('/profile')}
+            className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold hover:bg-blue-700 transition select-none"
+            title={email ?? ''}
+          >
+            {(email ?? '?').split('@')[0].slice(0, 2).toUpperCase()}
           </button>
         </div>
       </header>
