@@ -90,6 +90,10 @@ export default function WordsPage() {
       }
       setShowModal(false)
       fetchData()
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+        ?? '儲存失敗，請稍後再試'
+      alert(msg)
     } finally {
       setSaving(false)
     }
@@ -97,8 +101,12 @@ export default function WordsPage() {
 
   const handleDelete = async (word: Word) => {
     if (!confirm(`確定刪除「${word.word}」？`)) return
-    await deleteWord(word.id)
-    setWords((prev) => prev.filter((w) => w.id !== word.id))
+    try {
+      await deleteWord(word.id)
+      setWords((prev) => prev.filter((w) => w.id !== word.id))
+    } catch {
+      alert('刪除失敗，請稍後再試')
+    }
   }
 
   const toggleSelect = (id: number) => {

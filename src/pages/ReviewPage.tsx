@@ -12,6 +12,7 @@ export default function ReviewPage() {
   const { bookId } = useParams<{ bookId: string }>()
   const navigate = useNavigate()
   const id = Number(bookId)
+  if (isNaN(id)) { navigate('/books'); return null }
 
   const [book, setBook] = useState<WordBook | null>(null)
   const [words, setWords] = useState<Word[]>([])
@@ -51,7 +52,7 @@ export default function ReviewPage() {
   }, [index, phase])
 
   const handleAnswer = async (isCorrect: boolean) => {
-    await submitReview(currentWord.id, isCorrect)
+    try { await submitReview(currentWord.id, isCorrect) } catch { /* 進度丟失不中斷流程 */ }
     if (isCorrect) setCorrect((c) => c + 1)
     else setWrong((w) => w + 1)
 
@@ -150,7 +151,7 @@ export default function ReviewPage() {
       <div className="bg-gray-200 h-1">
         <div
           className="bg-blue-500 h-1 transition-all"
-          style={{ width: `${(index / total) * 100}%` }}
+          style={{ width: `${((index + 1) / total) * 100}%` }}
         />
       </div>
 

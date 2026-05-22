@@ -3,9 +3,9 @@ import api from './auth'
 export interface Word {
   id: number
   word: string
-  reading: string
+  reading: string | null
   translation: string
-  example: string
+  example: string | null
   level: string
   language: 'JAPANESE' | 'ENGLISH'
   createdAt: string

@@ -10,6 +10,21 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      const path: string = error.config?.url ?? ''
+      if (!path.startsWith('/api/auth')) {
+        localStorage.removeItem('token')
+        localStorage.removeItem('email')
+        window.location.href = '/login'
+      }
+    }
+    return Promise.reject(error)
+  }
+)
+
 export interface AuthResponse {
   token: string
   email: string
