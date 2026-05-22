@@ -180,6 +180,10 @@ src/
 
 ## 更新日誌 / Changelog
 
+### v1.0.1 (2026-05-22)
+- 新增：註冊頁加入顯示名稱欄位
+- 修正：重設密碼前端驗證改為 8 碼+英數，加入 axios 30 秒 timeout
+
 ### v1.0.0 (2026-05-22)
 - 新增：會員專區頁面（`/profile`）— 頭像（姓名縮寫）、顯示名稱、編輯名稱、更改密碼、關於
 - 新增：頂部導覽列以頭像圓圈按鈕進入會員專區，並移除獨立登出按鈕
@@ -232,6 +236,10 @@ src/
 - 初始版本：登入、單字書管理、閃卡測驗、學習統計
 
 ---
+
+### v1.0.1 (2026-05-22)
+- Add: Display name field on register page
+- Fix: Reset password frontend validation updated to 8+ chars; axios 30s timeout added
 
 ### v1.0.0 (2026-05-22)
 - Add: Member profile page (/profile) — avatar (initials), display name, edit name, change password, About
