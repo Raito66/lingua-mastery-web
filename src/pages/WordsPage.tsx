@@ -41,6 +41,9 @@ export default function WordsPage() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [deleting, setDeleting] = useState(false)
 
+  const [searchText, setSearchText] = useState('')
+  const [filterLevel, setFilterLevel] = useState<number | null>(null)
+
   const id = Number(bookId)
 
   const fetchData = async () => {
@@ -118,10 +121,10 @@ export default function WordsPage() {
   }
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === words.length) {
+    if (selectedIds.size === filteredWords.length && filteredWords.length > 0) {
       setSelectedIds(new Set())
     } else {
-      setSelectedIds(new Set(words.map((w) => w.id)))
+      setSelectedIds(new Set(filteredWords.map((w) => w.id)))
     }
   }
 
@@ -156,6 +159,16 @@ export default function WordsPage() {
   }
 
   const levels = book?.language === 'JAPANESE' ? JAPANESE_LEVELS : ENGLISH_LEVELS
+
+  const filteredWords = words.filter((w) => {
+    const q = searchText.trim().toLowerCase()
+    const matchSearch = q === '' ||
+      w.word.toLowerCase().includes(q) ||
+      w.translation.toLowerCase().includes(q) ||
+      (w.reading ?? '').toLowerCase().includes(q)
+    const matchLevel = filterLevel === null || w.proficiencyLevel === filterLevel
+    return matchSearch && matchLevel
+  })
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -235,18 +248,67 @@ export default function WordsPage() {
                 </div>
               )
             })()}
+            {/* 搜尋列 */}
+            <input
+              type="text"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder="搜尋單字、翻譯或讀音..."
+              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
+            />
+            {/* 熟練度篩選 */}
+            <div className="flex gap-2 flex-wrap">
+              {([
+                [null,  '全部',   'bg-gray-100 text-gray-600'],
+                [0,     '未學習', 'bg-gray-200 text-gray-500'],
+                [1,     '學習中', 'bg-yellow-100 text-yellow-700'],
+                [2,     '已熟悉', 'bg-green-100 text-green-700'],
+                [3,     '已精通', 'bg-purple-100 text-purple-700'],
+              ] as const).map(([level, label, cls]) => (
+                <button
+                  key={String(level)}
+                  onClick={() => setFilterLevel(level)}
+                  className={`text-xs font-medium px-3 py-1.5 rounded-full transition border ${
+                    filterLevel === level
+                      ? `${cls} border-current ring-1 ring-current`
+                      : `${cls} border-transparent opacity-60 hover:opacity-100`
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+              {(searchText || filterLevel !== null) && (
+                <button
+                  onClick={() => { setSearchText(''); setFilterLevel(null) }}
+                  className="text-xs text-gray-400 hover:text-gray-600 px-2"
+                >
+                  清除篩選
+                </button>
+              )}
+            </div>
+            {/* 篩選結果提示 */}
+            {(searchText || filterLevel !== null) && (
+              <p className="text-xs text-gray-400 px-1">
+                顯示 {filteredWords.length} / {words.length} 個單字
+              </p>
+            )}
             <div className="flex items-center gap-2 px-1 pb-1">
               <input
                 type="checkbox"
-                checked={selectedIds.size === words.length && words.length > 0}
+                checked={selectedIds.size === filteredWords.length && filteredWords.length > 0}
                 onChange={toggleSelectAll}
                 className="w-4 h-4 accent-blue-600 cursor-pointer"
               />
               <span className="text-sm text-gray-400">
-                {selectedIds.size > 0 ? `已選 ${selectedIds.size} / ${words.length}` : '全選'}
+                {selectedIds.size > 0 ? `已選 ${selectedIds.size} / ${filteredWords.length}` : '全選'}
               </span>
             </div>
-            {words.map((w) => (
+            {filteredWords.length === 0 ? (
+              <div className="text-center py-12 text-gray-400">
+                <p className="text-3xl mb-2">🔍</p>
+                <p className="text-sm">找不到符合的單字</p>
+              </div>
+            ) : filteredWords.map((w) => (
               <div
                 key={w.id}
                 className={`bg-white rounded-xl border px-5 py-4 hover:shadow-sm transition ${selectedIds.has(w.id) ? 'border-blue-300 bg-blue-50' : ''}`}
