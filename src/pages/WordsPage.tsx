@@ -292,17 +292,19 @@ export default function WordsPage() {
                 顯示 {filteredWords.length} / {words.length} 個單字
               </p>
             )}
-            <div className="flex items-center gap-2 px-1 pb-1">
-              <input
-                type="checkbox"
-                checked={selectedIds.size === filteredWords.length && filteredWords.length > 0}
-                onChange={toggleSelectAll}
-                className="w-4 h-4 accent-blue-600 cursor-pointer"
-              />
-              <span className="text-sm text-gray-400">
-                {selectedIds.size > 0 ? `已選 ${selectedIds.size} / ${filteredWords.length}` : '全選'}
-              </span>
-            </div>
+            {filteredWords.length > 0 && (
+              <div className="flex items-center gap-2 px-1 pb-1">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.size === filteredWords.length}
+                  onChange={toggleSelectAll}
+                  className="w-4 h-4 accent-blue-600 cursor-pointer"
+                />
+                <span className="text-sm text-gray-400">
+                  {selectedIds.size > 0 ? `已選 ${selectedIds.size} / ${filteredWords.length}` : '全選'}
+                </span>
+              </div>
+            )}
             {filteredWords.length === 0 ? (
               <div className="text-center py-12 text-gray-400">
                 <p className="text-3xl mb-2">🔍</p>
