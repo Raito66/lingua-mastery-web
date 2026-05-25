@@ -201,6 +201,40 @@ export default function WordsPage() {
           </div>
         ) : (
           <div className="space-y-3">
+            {/* 熟練度進度條 + 各等級統計 */}
+            {(() => {
+              const counts = [0, 0, 0, 0]
+              words.forEach((w) => counts[Math.min(w.proficiencyLevel, 3)]++)
+              const total = words.length
+              return (
+                <div className="bg-white rounded-xl border p-4 mb-2">
+                  <div className="flex h-2 rounded-full overflow-hidden mb-3">
+                    {counts[3] > 0 && <div className="bg-purple-400 transition-all" style={{ width: `${(counts[3] / total) * 100}%` }} />}
+                    {counts[2] > 0 && <div className="bg-green-400 transition-all" style={{ width: `${(counts[2] / total) * 100}%` }} />}
+                    {counts[1] > 0 && <div className="bg-yellow-400 transition-all" style={{ width: `${(counts[1] / total) * 100}%` }} />}
+                    {counts[0] > 0 && <div className="bg-gray-200 transition-all" style={{ width: `${(counts[0] / total) * 100}%` }} />}
+                  </div>
+                  <div className="grid grid-cols-4 text-center">
+                    <div>
+                      <p className="text-lg font-bold text-purple-500">{counts[3]}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">已精通</p>
+                    </div>
+                    <div>
+                      <p className="text-lg font-bold text-green-500">{counts[2]}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">已熟悉</p>
+                    </div>
+                    <div>
+                      <p className="text-lg font-bold text-yellow-500">{counts[1]}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">學習中</p>
+                    </div>
+                    <div>
+                      <p className="text-lg font-bold text-gray-400">{counts[0]}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">未學習</p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })()}
             <div className="flex items-center gap-2 px-1 pb-1">
               <input
                 type="checkbox"
