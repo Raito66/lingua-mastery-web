@@ -63,6 +63,9 @@ export default function WordsPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const fetchStats = async () => {
     try {
       const statsRes = await getBookStats(id)
       setBookStats(statsRes.data)
@@ -71,7 +74,7 @@ export default function WordsPage() {
     }
   }
 
-  useEffect(() => { fetchData() }, [id])
+  useEffect(() => { fetchData(); fetchStats() }, [id])
 
   const openCreate = () => {
     setEditWord(null)
@@ -98,11 +101,14 @@ export default function WordsPage() {
     try {
       if (editWord) {
         await updateWord(editWord.id, form)
+        setShowModal(false)
+        fetchData()
       } else {
         await createWord(id, form)
+        setShowModal(false)
+        fetchData()
+        fetchStats()
       }
-      setShowModal(false)
-      fetchData()
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
         ?? '儲存失敗，請稍後再試'
@@ -117,6 +123,7 @@ export default function WordsPage() {
     try {
       await deleteWord(word.id)
       setWords((prev) => prev.filter((w) => w.id !== word.id))
+      fetchStats()
     } catch {
       alert('刪除失敗，請稍後再試')
     }
@@ -145,6 +152,7 @@ export default function WordsPage() {
       await deleteWords(Array.from(selectedIds))
       setSelectedIds(new Set())
       fetchData()
+      fetchStats()
     } finally {
       setDeleting(false)
     }
@@ -158,7 +166,7 @@ export default function WordsPage() {
     try {
       const res = await importWords(id, importFile)
       setImportResult(res.data)
-      if (res.data.success > 0) fetchData()
+      if (res.data.success > 0) { fetchData(); fetchStats() }
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
         ?? '上傳失敗，請確認檔案格式'
