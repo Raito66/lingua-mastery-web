@@ -5,6 +5,8 @@ import type { Word, WordRequest, ImportResult } from '../api/words'
 import { speak } from '../utils/tts'
 import { getBooks } from '../api/books'
 import type { WordBook } from '../api/books'
+import { getBookStats } from '../api/stats'
+import type { BookStatsResponse } from '../api/stats'
 
 const JAPANESE_LEVELS = ['JLPT_N5', 'JLPT_N4', 'JLPT_N3', 'JLPT_N2', 'JLPT_N1']
 const ENGLISH_LEVELS = ['TOEIC_300', 'TOEIC_300_500', 'TOEIC_500_700', 'TOEIC_700_900', 'TOEIC_900PLUS']
@@ -41,6 +43,8 @@ export default function WordsPage() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [deleting, setDeleting] = useState(false)
 
+  const [bookStats, setBookStats] = useState<BookStatsResponse | null>(null)
+
   const [searchText, setSearchText] = useState('')
   const [filterLevel, setFilterLevel] = useState<number | null>(null)
 
@@ -58,6 +62,12 @@ export default function WordsPage() {
       navigate('/books')
     } finally {
       setLoading(false)
+    }
+    try {
+      const statsRes = await getBookStats(id)
+      setBookStats(statsRes.data)
+    } catch {
+      // 統計載入失敗不影響主要功能
     }
   }
 
@@ -245,6 +255,20 @@ export default function WordsPage() {
                       <p className="text-xs text-gray-400 mt-0.5">未學習</p>
                     </div>
                   </div>
+                  {bookStats && bookStats.totalStudied > 0 && (
+                    <>
+                      <div className="border-t border-gray-100 mt-3 pt-3 grid grid-cols-2 text-center">
+                        <div>
+                          <p className="text-lg font-bold text-blue-500">{bookStats.totalStudied}</p>
+                          <p className="text-xs text-gray-400 mt-0.5">練習次數</p>
+                        </div>
+                        <div>
+                          <p className="text-lg font-bold text-blue-500">{bookStats.accuracy}%</p>
+                          <p className="text-xs text-gray-400 mt-0.5">答題準確率</p>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               )
             })()}
