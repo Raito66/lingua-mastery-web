@@ -180,6 +180,9 @@ src/
 
 ## 更新日誌 / Changelog
 
+### v1.0.4 (2026-05-27)
+- 新增：單字列表顯示每本書獨立的練習次數與答題準確率
+
 ### v1.0.3 (2026-05-25)
 - 新增：單字列表支援即時搜尋（單字 / 翻譯 / 讀音）與熟練度篩選
 
@@ -242,6 +245,15 @@ src/
 - 初始版本：登入、單字書管理、閃卡測驗、學習統計
 
 ---
+
+### v1.0.4 (2026-05-27)
+- Add: Per-book study count and accuracy displayed in word list
+
+### v1.0.3 (2026-05-25)
+- Add: Word list supports live search (word / translation / reading) and proficiency filter
+
+### v1.0.2 (2026-05-25)
+- Add: Proficiency progress bar and level stats added to word list
 
 ### v1.0.1 (2026-05-22)
 - Add: Display name field on register page
